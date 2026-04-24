@@ -55,7 +55,7 @@ const MapComponent = ({ layerName, bbox, zoom }) => {
                             };
                             return new Style({
                                 fill: new Fill({ color: colors[sourceType] || 'rgba(156, 156, 156, 0.7)' }),
-                                stroke: new Stroke({ color: '#fff', width: 1 })
+                                stroke: new Stroke({ color: '#0b0b0b', width: 1 })
                             });
                         }
                     });

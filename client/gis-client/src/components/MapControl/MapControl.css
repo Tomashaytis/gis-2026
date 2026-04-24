@@ -1,0 +1,33 @@
+.map-control {
+  display: inline-flex;
+  background-color: #8f9296;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  margin: 10px;
+}
+
+.segment {
+  min-width: 100px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  color: #4a5568;
+  outline: none;
+}
+
+.segment.active {
+  background-color: rgb(50, 50, 50);
+  color: #3b82f6;
+  outline: none;
+}
+
+.segment:hover:not(.active) {
+  background-color: rgb(91, 90, 90);
+  color: #6fa6ff;
+  outline: none;
+}
