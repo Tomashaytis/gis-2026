@@ -4,17 +4,18 @@ INSTALL httpfs;
 LOAD spatial;
 LOAD httpfs;
 
+-- Загрузка оцифрованных данных из OSM
 DROP TABLE osm_data;
 CREATE TABLE osm_data AS
 SELECT *
-FROM ST_Read('D:\Projects\GIS\gis-2026\map.geojson')
-WHERE building IS NOT NULL;
+FROM ST_Read('D:\Projects\GIS\gis-2026\map.geojson');
 
+-- Загрузка границ тайлов из Overture Maps
 DROP TABLE links;
 CREATE TABLE links AS
 WITH raw_data AS (
 	SELECT *
-	FROM 'D:\Projects\GIS\gis-2026\collection.json' -- 'https://stac.overturemaps.org/2026-04-15.0/buildings/building/collection.json'
+	FROM 'https://stac.overturemaps.org/2026-04-15.0/buildings/building/collection.json' -- 'D:\Projects\GIS\gis-2026\collection.json' 
 ),
 raw_links AS (
 	SELECT unnest(links) AS link
@@ -37,14 +38,17 @@ SELECT href, xmin, xmax, ymin, ymax
 FROM links
 JOIN bboxes ON links.id = bboxes.id;
 
+-- Поиск тайла Overture Maps, соответствующего оцифрованным данным
 SELECT DISTINCT 'https://stac.overturemaps.org/2026-04-15.0/buildings/building/' || links.href link
 FROM links
 JOIN osm_data ON ST_Xmin(geom) BETWEEN links.xmin AND links.xmax 
 	AND ST_Ymin(geom) BETWEEN links.ymin AND links.ymax; 
 
+-- Поиск URL для загрузки данных из Overture Maps для выбранного региона
 SELECT assets.aws.alternate.s3.href
 FROM 'https://stac.overturemaps.org/2026-04-15.0/buildings/building/./00444/00444.json';
 
+-- Отсечение зданий, не попадающих в bbox оцифрованных данных
 DROP TABLE overture_data;
 CREATE TABLE overture_data AS
 WITH osm_data_geom_bbox AS (
@@ -63,6 +67,7 @@ FROM read_parquet('s3://overturemaps-us-west-2/release/2026-04-15.0/theme=buildi
 JOIN osm_data_bbox ON ST_Xmin(geometry) BETWEEN osm_data_bbox.xmin AND osm_data_bbox.xmax 
 	AND ST_Ymin(geometry) BETWEEN osm_data_bbox.ymin AND osm_data_bbox.ymax;
 
+-- Разметка собранных данных (добавление источника)
 DROP TABLE overture_with_source;
 CREATE TABLE overture_with_source AS
 WITH exploded AS (
@@ -74,7 +79,7 @@ overture_with_source AS (
         CASE 
             WHEN EXISTS (
                 SELECT 1 FROM osm_data osm 
-                WHERE ST_Intersects(osm.geom, ST_SetCRS(geometry, 'EPSG:4326'))
+                WHERE osm.building IS NOT NULL AND ST_Intersects(osm.geom, ST_SetCRS(geometry, 'EPSG:4326'))
             ) THEN 'my'
             WHEN source_item['dataset'] = 'OpenStreetMap' THEN 'osm'
             WHEN source_item['dataset'] LIKE 'Microsoft ML Buildings' THEN 'ml'
@@ -84,6 +89,7 @@ overture_with_source AS (
 )
 SELECT * FROM overture_with_source;
 
+-- Сохранение в GeoJSON
 COPY overture_with_source
 TO 'D:\Projects\GIS\gis-2026\overture_map.geojson'
 WITH (FORMAT GDAL, DRIVER 'GeoJSON');
