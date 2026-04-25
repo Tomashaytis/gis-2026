@@ -143,4 +143,9 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 .qodo
+
+# DuckDB files
 *.duckdb
+*.duckdb.wal
+*.db
+*.sqlite

@@ -20,3 +20,31 @@
     border-style: solid;
     border-radius: 10px;
 }
+
+.simple-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    z-index: 1000;
+    font-size: 12px;
+}
+
+.simple-legend-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.legend-color-my { width: 20px; height: 20px; background: rgba(76, 175, 80, 0.7); margin-right: 8px; }
+.legend-color-osm { width: 20px; height: 20px; background: rgba(33, 150, 243, 0.7); margin-right: 8px; }
+.legend-color-ml { width: 20px; height: 20px; background: rgba(255, 152, 0, 0.7); margin-right: 8px; }
+.legend-color-other { width: 20px; height: 20px; background: rgba(100, 100, 100, 0.7); margin-right: 8px; }
