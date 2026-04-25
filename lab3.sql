@@ -82,7 +82,10 @@ overture_with_source AS (
                 WHERE osm.building IS NOT NULL AND ST_Intersects(osm.geom, ST_SetCRS(geometry, 'EPSG:4326'))
             ) THEN 'my'
             WHEN source_item['dataset'] = 'OpenStreetMap' THEN 'osm'
-            WHEN source_item['dataset'] LIKE 'Microsoft ML Buildings' THEN 'ml'
+            WHEN source_item['dataset'] LIKE '%Microsoft%' 
+     			OR source_item['dataset'] LIKE '%Google%' 
+     			OR source_item['dataset'] LIKE '%ML%'
+     			OR source_item['dataset'] LIKE '%machine learning%' THEN 'ml'
             ELSE 'other'
         END AS source_type
     FROM exploded
