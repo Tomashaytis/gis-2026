@@ -44,7 +44,7 @@ FROM links
 JOIN osm_data ON ST_Xmin(geom) BETWEEN links.xmin AND links.xmax 
 	AND ST_Ymin(geom) BETWEEN links.ymin AND links.ymax; 
 
--- Поиск URL для загрузки данных из Overture Maps для выбранного региона
+-- Поиск URL для загрузки данных из Overture Maps для выбранного тайла
 SELECT assets.aws.alternate.s3.href
 FROM 'https://stac.overturemaps.org/2026-04-15.0/buildings/building/./00444/00444.json';
 
